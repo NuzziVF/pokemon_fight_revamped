@@ -30,10 +30,14 @@ def game_loop():
     white_color = (255, 255, 255)
 
     # Load an image from disk
-    image = pygame.image.load("example_image.png")
+    image1 = pygame.image.load("images/charizard.png")
+    image2 = pygame.image.load("images/venasaur.png")
+    image3 = pygame.image.load("images/blastoise.png")
 
     # Get the rectangle representing the loaded image
-    image_rect = image.get_rect()
+    image_rect1 = image1.get_rect()
+    image_rect2 = image2.get_rect()
+    image_rect3 = image3.get_rect()
 
     # Set up the buttons
     button_width = 200
@@ -122,6 +126,11 @@ def game_loop():
             (rect_position, (rect_width, rect_height)),
             rect_thickness,
         )
+
+        # Draw the image on the screen
+        screen.blit(image1, image_rect1)
+        screen.blit(image2, image_rect2)
+        screen.blit(image3, image_rect3)
 
         for button in buttons:
             button.draw(screen)
