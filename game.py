@@ -1,3 +1,13 @@
+# import sys
+# sys.path.insert(0, '../python_battle_files')
+
+# import type_adv
+
+# type_adv.grass_check()
+
+# example.my_function()
+
+
 import pygame
 from button import Button
 
@@ -45,7 +55,7 @@ def game_loop():
     ## images image_load
     
     image1 = pygame.image.load("images/charizard.png")
-    image2 = pygame.image.load("images/venasaur.png")
+    image2 = pygame.image.load("images/venusaur.png")
     image3 = pygame.image.load("images/blastoise.png")
     
     # TODO: mess around with positions to get this to change according to the player specifically.
@@ -55,7 +65,7 @@ def game_loop():
     ## image_load
     
     charizard_image = image1.get_rect()
-    venasaur_image = image2.get_rect()
+    venusaur_image = image2.get_rect()
     image_rect3 = image3.get_rect()
 
     # Set the position of each image using the Rect attributes
@@ -67,8 +77,8 @@ def game_loop():
     charizard_image.left = enemy_position_x
     charizard_image.top = enemy_position_y
     
-    venasaur_image.left = player_position_x
-    venasaur_image.top = player_position_y
+    venusaur_image.left = player_position_x
+    venusaur_image.top = player_position_y
 
     
 
@@ -174,12 +184,12 @@ def game_loop():
             rect_thickness,
         )
         
-        venasaur_image.bottom = rect.top - 10
+        venusaur_image.bottom = rect.top - 10
 
 
         # Draw the image on the screen
         screen.blit(image1, charizard_image)
-        screen.blit(image2, venasaur_image)
+        screen.blit(image2, venusaur_image)
         # screen.blit(image3, image_rect3)
 
         for button in buttons:

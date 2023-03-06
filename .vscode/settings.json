@@ -4,8 +4,10 @@
         "blastoise",
         "blit",
         "charizard",
+        "giga",
         "KEYDOWN",
         "pygame",
-        "venasaur"
+        "venasaur",
+        "venusaur"
     ]
 }
