@@ -10,11 +10,66 @@
 
 import pygame
 from button import Button
+import random as r
+
+from battle_loop import *
 
 # general comment
 ## tag comment for Ctrl + F
 
 ## available tags: screen_config clock time rectangle_config rect_placement color_variables images image_load button_config game_loop key_input input
+
+
+def enemy_pokemon_choice():
+    enemy_choice = r.randint(1, 3)
+    print(enemy_choice)
+    if enemy_choice == 1:
+        return "charizard"
+    if enemy_choice == 2:
+        return "venusaur"
+    if enemy_choice == 3:
+        return "blastoise"
+
+
+def load_image_charizard(is_player_mon):
+    image = pygame.image.load("images/charizard.png")
+
+    if is_player_mon:
+        # TODO: mess around with positions to get this to change according to the player specifically.
+        image = pygame.transform.flip(image, True, False)
+
+    # Get the rectangle representing the loaded image
+    ## image_load
+
+    charizard_image = image.get_rect()
+    return image, charizard_image
+
+
+def load_image_venusaur(is_player_mon):
+    image = pygame.image.load("images/venusaur.png")
+
+    if is_player_mon:
+        # TODO: mess around with positions to get this to change according to the player specifically.
+        image = pygame.transform.flip(image, True, False)
+
+    # Get the rectangle representing the loaded image
+    ## image_load
+
+    venusaur_image = image.get_rect()
+    return image, venusaur_image
+
+
+def load_image_blastoise(is_player_mon):
+    image = pygame.image.load("images/blastoise.png")
+
+    if is_player_mon:
+        # TODO: mess around with positions to get this to change according to the player specifically.
+        image = pygame.transform.flip(image, True, False)
+
+    # Get the rectangle representing the loaded image
+    blastoise_rect = image.get_rect()
+    return image, blastoise_rect
+
 
 def game_loop():
     # Initialize Pygame
@@ -23,7 +78,7 @@ def game_loop():
 
     # Set up the screen
     ## screen_config
-    
+
     screen_width = 800
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -35,7 +90,7 @@ def game_loop():
 
     # Set up the rectangle
     ## rectangle_config rect_placement
-    
+
     rect_color = (0, 0, 0)
     rect_width = 750
     rect_height = 175
@@ -44,52 +99,58 @@ def game_loop():
         (screen_height - rect_height) - 20,
     )
     rect_thickness = 2
-    
+
     ## color_variables
     red_color = (255, 0, 0)
     green_color = (0, 255, 0)
     black_color = (0, 0, 0)
     white_color = (255, 255, 255)
 
+    # Chooses pokemon for enemy
+    enemy_pokemon = enemy_pokemon_choice()
+    player_pokemon_image = 2
+
     # Load an image from disk
     ## images image_load
-    
-    image1 = pygame.image.load("images/charizard.png")
-    image2 = pygame.image.load("images/venusaur.png")
-    image3 = pygame.image.load("images/blastoise.png")
-    
-    # TODO: mess around with positions to get this to change according to the player specifically.
-    image2 = pygame.transform.flip(image2, True, False)
+    # for each in range(1, 3):
+    #     if player_pokemon_image == 1:
+    #         charizard_image = load_image_charizard(True)
+    #     else:
+    #         charizard_image = load_image_charizard(False)
 
-    # Get the rectangle representing the loaded image
-    ## image_load
-    
-    charizard_image = image1.get_rect()
-    venusaur_image = image2.get_rect()
-    image_rect3 = image3.get_rect()
+    #     if player_pokemon_image == 2:
+    #         venusaur_image = load_image_venusaur(True)
+    #     else:
+    #         venusaur_image = load_image_venusaur(False)
+    #     if player_pokemon_image == 3:
+    #         blastoise_image = load_image_blastoise(True)
+    #     else:
+    #         blastoise_image = load_image_blastoise(False)
+
+    images = {1: load_image_charizard, 2: load_image_venusaur, 3: load_image_blastoise}
+
+    charizard_image = images.get(1)(player_pokemon_image == 1)
+    venusaur_image = images.get(2)(player_pokemon_image == 2)
+    blastoise_image = images.get(3)(player_pokemon_image == 3)
+
+    if enemy_pokemon == "charizard":
+        enemy_pokemon_image = charizard_image[1]
+    elif enemy_pokemon == "venusaur":
+        enemy_pokemon_image = venusaur_image[1]
+    elif enemy_pokemon == "blastoise":
+        enemy_pokemon_image = blastoise_image[1]
 
     # Set the position of each image using the Rect attributes
     enemy_position_x = 450
     enemy_position_y = 25
     player_position_x = 75
     player_position_y = 200
-    
+
     charizard_image.left = enemy_position_x
     charizard_image.top = enemy_position_y
-    
+
     venusaur_image.left = player_position_x
     venusaur_image.top = player_position_y
-
-    
-
-    
-    # image_rect1.left = 100
-    # image_rect1.top = 100
-    # image_rect2.right = 500
-    # image_rect2.bottom = 400
-    # image_rect3.centerx = 320
-    # image_rect3.centery = 240
-    
 
     # Set up the buttons
     ## button_config
@@ -138,7 +199,7 @@ def game_loop():
 
     # Main game loop
     ## game_loop
-    
+
     while True:
         # Handle events
         for event in pygame.event.get():
@@ -183,9 +244,8 @@ def game_loop():
             (rect_position, (rect_width, rect_height)),
             rect_thickness,
         )
-        
-        venusaur_image.bottom = rect.top - 10
 
+        venusaur_image.bottom = rect.top - 10
 
         # Draw the image on the screen
         screen.blit(image1, charizard_image)

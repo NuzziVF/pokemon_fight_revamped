@@ -255,172 +255,171 @@ class Pokemon:
         self.current_health = min(self.current_health, self.max_health)
 
 
-# Power: the strength of the move, measured in damage dealt to the opponent's hp.
-# Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
-# Type: the elemental type of the move, which determines its effectiveness against other types.
-# Heal Factor : The percent amount that you would heal.
-# Weather : Boolean value that tells if the move evokes a weather status.
-# Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
-# Name: the name of the move.
+def battle_loop_main(players_button_input):
+    # Power: the strength of the move, measured in damage dealt to the opponent's hp.
+    # Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
+    # Type: the elemental type of the move, which determines its effectiveness against other types.
+    # Heal Factor : The percent amount that you would heal.
+    # Weather : Boolean value that tells if the move evokes a weather status.
+    # Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
+    # Name: the name of the move.
 
-flamethrower = [90, 100, "Fire", 0, False, "Special", "Flamethrower"]
-air_slash = [75, 95, "Flying", 0, False, "Special", "Air Slash"]
-dragon_pulse = [85, 100, "Dragon", 0, False, "Special", "Dragon Pulse"]
-roost = [0, 100, "Flying", 50, False, "Status", "Roost"]
-giga_drain = [75, 100, "Grass", 50, False, "Special", "Giga Drain"]
-sludge_bomb = [90, 100, "Poison", 0, False, "Special", "Sludge Bomb"]
-leech_seed = [0, 90, "Grass", 0, False, "Status", "Leech Seed"]
-synthesis = [0, 100, "Grass", 50, False, "Status", "Synthesis"]
-hydro_pump = [110, 80, "Water", 0, False, "Special", "Hydro Pump"]
-ice_beam = [90, 100, "Ice", 0, False, "Special", "Ice Beam"]
-earthquake = [100, 100, "Ground", 0, False, "Physical", "Earthquake"]
-rapid_spin = [50, 100, "Normal", 0, False, "Physical", "Rapid Spin"]
+    flamethrower = [90, 100, "Fire", 0, False, "Special", "Flamethrower"]
+    air_slash = [75, 95, "Flying", 0, False, "Special", "Air Slash"]
+    dragon_pulse = [85, 100, "Dragon", 0, False, "Special", "Dragon Pulse"]
+    roost = [0, 100, "Flying", 50, False, "Status", "Roost"]
+    giga_drain = [75, 100, "Grass", 50, False, "Special", "Giga Drain"]
+    sludge_bomb = [90, 100, "Poison", 0, False, "Special", "Sludge Bomb"]
+    leech_seed = [0, 90, "Grass", 0, False, "Status", "Leech Seed"]
+    synthesis = [0, 100, "Grass", 50, False, "Status", "Synthesis"]
+    hydro_pump = [110, 80, "Water", 0, False, "Special", "Hydro Pump"]
+    ice_beam = [90, 100, "Ice", 0, False, "Special", "Ice Beam"]
+    earthquake = [100, 100, "Ground", 0, False, "Physical", "Earthquake"]
+    rapid_spin = [50, 100, "Normal", 0, False, "Physical", "Rapid Spin"]
 
+    # Define the base stats, abilities, moves, and type strengths/weaknesses for each Pokémon
+    charizard_base_stats = {
+        "hp": 78,
+        "Attack": 84,
+        "Defense": 78,
+        "Special Attack": 109,
+        "Special Defense": 85,
+        "Speed": 100,
+    }
 
-# Define the base stats, abilities, moves, and type strengths/weaknesses for each Pokémon
-charizard_base_stats = {
-    "hp": 78,
-    "Attack": 84,
-    "Defense": 78,
-    "Special Attack": 109,
-    "Special Defense": 85,
-    "Speed": 100,
-}
+    charizard_abilities = ["Blaze", "Solar Power"]
+    charizard_moves = [flamethrower, air_slash, dragon_pulse, roost]
+    charizard_weaknesses = ["Rock", "Electric", "Water"]
+    charizard_resistances = ["Fire", "Grass", "Bug", "Steel", "Fairy"]
+    charizard_immunities = ["Ground"]
 
-charizard_abilities = ["Blaze", "Solar Power"]
-charizard_moves = [flamethrower, air_slash, dragon_pulse, roost]
-charizard_weaknesses = ["Rock", "Electric", "Water"]
-charizard_resistances = ["Fire", "Grass", "Bug", "Steel", "Fairy"]
-charizard_immunities = ["Ground"]
+    venusaur_base_stats = {
+        "hp": 80,
+        "Attack": 82,
+        "Defense": 83,
+        "Special Attack": 100,
+        "Special Defense": 100,
+        "Speed": 80,
+    }
+    venusaur_abilities = ["Overgrow", "Chlorophyll"]
+    venusaur_moves = [giga_drain, sludge_bomb, leech_seed, synthesis]
+    venusaur_weaknesses = ["Fire", "Flying", "Ice", "Psychic"]
+    venusaur_resistances = ["Water", "Electric", "Grass", "Fighting", "Fairy"]
+    venusaur_immunities = []
 
-venusaur_base_stats = {
-    "hp": 80,
-    "Attack": 82,
-    "Defense": 83,
-    "Special Attack": 100,
-    "Special Defense": 100,
-    "Speed": 80,
-}
-venusaur_abilities = ["Overgrow", "Chlorophyll"]
-venusaur_moves = [giga_drain, sludge_bomb, leech_seed, synthesis]
-venusaur_weaknesses = ["Fire", "Flying", "Ice", "Psychic"]
-venusaur_resistances = ["Water", "Electric", "Grass", "Fighting", "Fairy"]
-venusaur_immunities = []
+    blastoise_base_stats = {
+        "hp": 79,
+        "Attack": 83,
+        "Defense": 100,
+        "Special Attack": 85,
+        "Special Defense": 105,
+        "Speed": 78,
+    }
+    blastoise_abilities = ["Torrent", "Rain Dish"]
+    blastoise_moves = [hydro_pump, ice_beam, earthquake, rapid_spin]
+    blastoise_weaknesses = ["Electric", "Grass"]
+    blastoise_resistances = ["Water", "Fire", "Ice", "Steel"]
+    blastoise_immunities = []
 
-blastoise_base_stats = {
-    "hp": 79,
-    "Attack": 83,
-    "Defense": 100,
-    "Special Attack": 85,
-    "Special Defense": 105,
-    "Speed": 78,
-}
-blastoise_abilities = ["Torrent", "Rain Dish"]
-blastoise_moves = [hydro_pump, ice_beam, earthquake, rapid_spin]
-blastoise_weaknesses = ["Electric", "Grass"]
-blastoise_resistances = ["Water", "Fire", "Ice", "Steel"]
-blastoise_immunities = []
+    # Create Charizard, Venusaur, and Blastoise Pokémon objects
+    charizard = Pokemon(
+        name="Charizard",
+        type1="Fire",
+        type2="Flying",
+        base_stats=charizard_base_stats,
+        abilities=charizard_abilities,
+        moves=charizard_moves,
+        weaknesses=charizard_weaknesses,
+        resistances=charizard_resistances,
+        immunities=charizard_immunities,
+    )
 
-# Create Charizard, Venusaur, and Blastoise Pokémon objects
-charizard = Pokemon(
-    name="Charizard",
-    type1="Fire",
-    type2="Flying",
-    base_stats=charizard_base_stats,
-    abilities=charizard_abilities,
-    moves=charizard_moves,
-    weaknesses=charizard_weaknesses,
-    resistances=charizard_resistances,
-    immunities=charizard_immunities,
-)
+    venusaur = Pokemon(
+        name="Venusaur",
+        type1="Grass",
+        type2="Poison",
+        base_stats=venusaur_base_stats,
+        abilities=venusaur_abilities,
+        moves=venusaur_moves,
+        weaknesses=venusaur_weaknesses,
+        resistances=venusaur_resistances,
+        immunities=venusaur_immunities,
+    )
 
-venusaur = Pokemon(
-    name="Venusaur",
-    type1="Grass",
-    type2="Poison",
-    base_stats=venusaur_base_stats,
-    abilities=venusaur_abilities,
-    moves=venusaur_moves,
-    weaknesses=venusaur_weaknesses,
-    resistances=venusaur_resistances,
-    immunities=venusaur_immunities,
-)
+    blastoise = Pokemon(
+        name="Blastoise",
+        type1="Water",
+        type2=None,
+        base_stats=blastoise_base_stats,
+        abilities=blastoise_abilities,
+        moves=blastoise_moves,
+        weaknesses=blastoise_weaknesses,
+        resistances=blastoise_resistances,
+        immunities=blastoise_immunities,
+    )
 
-blastoise = Pokemon(
-    name="Blastoise",
-    type1="Water",
-    type2=None,
-    base_stats=blastoise_base_stats,
-    abilities=blastoise_abilities,
-    moves=blastoise_moves,
-    weaknesses=blastoise_weaknesses,
-    resistances=blastoise_resistances,
-    immunities=blastoise_immunities,
-)
+    ### battle order
+    # press enter, choose move, speed check, battle calc happens, accuracy check happens first, if successful damage calc, first base damage, then elemental check, then crit chance, then health changes, then next pokemon goes, battle calc loops, then turn ends.
 
+    players_pokemon = venusaur
+    enemy_pokemon = charizard
 
-### battle order
-# press enter, choose move, speed check, battle calc happens, accuracy check happens first, if successful damage calc, first base damage, then elemental check, then crit chance, then health changes, then next pokemon goes, battle calc loops, then turn ends.
+    if players_pokemon.base_stats["Speed"] > enemy_pokemon.base_stats["Speed"]:
+        health_check(enemy_pokemon, players_pokemon)
 
-players_pokemon = venusaur
-enemy_pokemon = charizard
+        players_attack = players_pokemon.moves[0]
 
-if players_pokemon.base_stats["Speed"] > enemy_pokemon.base_stats["Speed"]:
-    health_check(enemy_pokemon, players_pokemon)
+        if players_attack[0] > 0:
+            print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
+            # This updates the health
+            enemy_pokemon.health_change(
+                damage_calc(players_pokemon, players_attack, enemy_pokemon)
+            )
+        else:
+            players_pokemon.heal(heal_calc(players_pokemon, players_attack))
 
-    players_attack = players_pokemon.moves[0]
+        health_check(enemy_pokemon, players_pokemon)
 
-    if players_attack[0] > 0:
-        print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
-        # This updates the health
-        enemy_pokemon.health_change(
-            damage_calc(players_pokemon, players_attack, enemy_pokemon)
-        )
+        enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+
+        if enemy_attack[0] > 0:
+            print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
+            # This updates the health
+            players_pokemon.health_change(
+                damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
+            )
+        else:
+            enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
+
+        health_check(enemy_pokemon, players_pokemon)
+
     else:
-        players_pokemon.heal(heal_calc(players_pokemon, players_attack))
+        # this chooses the enemy's move
+        enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
 
-    health_check(enemy_pokemon, players_pokemon)
+        health_check(enemy_pokemon, players_pokemon)
+        print(enemy_attack[6])
 
-    enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+        if enemy_attack[0] > 0:
+            print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
+            # This updates the health
+            players_pokemon.health_change(
+                damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
+            )
+        else:
+            enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
 
-    if enemy_attack[0] > 0:
-        print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
-        # This updates the health
-        players_pokemon.health_change(
-            damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
-        )
-    else:
-        enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
+        health_check(enemy_pokemon, players_pokemon)
 
-    health_check(enemy_pokemon, players_pokemon)
+        players_attack = players_pokemon.moves[0]
 
-else:
-    # this chooses the enemy's move
-    enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+        if players_attack[0] > 0:
+            print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
+            # This updates the health
+            enemy_pokemon.health_change(
+                damage_calc(players_pokemon, players_attack, enemy_pokemon)
+            )
+        else:
+            players_pokemon.heal(heal_calc(players_pokemon, players_attack))
 
-    health_check(enemy_pokemon, players_pokemon)
-    print(enemy_attack[6])
-
-    if enemy_attack[0] > 0:
-        print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
-        # This updates the health
-        players_pokemon.health_change(
-            damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
-        )
-    else:
-        enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
-
-    health_check(enemy_pokemon, players_pokemon)
-
-    players_attack = players_pokemon.moves[0]
-
-    if players_attack[0] > 0:
-        print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
-        # This updates the health
-        enemy_pokemon.health_change(
-            damage_calc(players_pokemon, players_attack, enemy_pokemon)
-        )
-    else:
-        players_pokemon.heal(heal_calc(players_pokemon, players_attack))
-
-    health_check(enemy_pokemon, players_pokemon)
+        health_check(enemy_pokemon, players_pokemon)
