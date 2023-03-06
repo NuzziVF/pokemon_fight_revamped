@@ -1,4 +1,5 @@
 import random as r
+import os
 
 # TODO: fix giga drains healing
 
@@ -98,6 +99,13 @@ def health_check(enemy_pokemon, players_pokemon):
     )
 
 
+def death_check(pokemon):
+    if pokemon.current_health <= 0:
+        return True
+    else:
+        return False
+
+
 class Pokemon:
     def __init__(
         self,
@@ -146,6 +154,7 @@ class Pokemon:
             "special_defense": 0,
             "speed": 0,
         }
+        self.is_dead = False
         self.current_health = self.max_health
 
     @property
@@ -254,8 +263,36 @@ class Pokemon:
         self.current_health += heal_amount
         self.current_health = min(self.current_health, self.max_health)
 
+    def load_health(self, players_pokemon_bool=False):
+        if players_pokemon_bool:
+            try:
+                with open(f"/battle_files/player_{self.name}_health.txt", "r") as f:
+                    health = f.read()
+                    self.current_health = health
+                    return health
+            except FileNotFoundError:
+                self.current_health = self.max_health
+                return self.base_stats["hp"]
+        else:
+            try:
+                with open(f"/battle_files/enemy_{self.name}_health.txt", "r") as f:
+                    health = f.read()
+                    self.current_health = health
+                    return health
+            except FileNotFoundError:
+                self.current_health = self.max_health
+                return self.base_stats["hp"]
 
-def battle_loop_main(players_button_input):
+    def save_health(self, players_pokemon_bool=False):
+        if players_pokemon_bool:
+            with open(f"/battle_files/player_{self.name}_health.txt", "w") as f:
+                f.write(str(self.current_health))
+        else:
+            with open(f"/battle_files/enemy_{self.name}_health.txt", "w") as f:
+                f.write(str(self.current_health))
+
+
+def battle_loop_main(players_button_input, enemy_pokemon_random, players_pokemon_input):
     # Power: the strength of the move, measured in damage dealt to the opponent's hp.
     # Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
     # Type: the elemental type of the move, which determines its effectiveness against other types.
@@ -361,13 +398,39 @@ def battle_loop_main(players_button_input):
     ### battle order
     # press enter, choose move, speed check, battle calc happens, accuracy check happens first, if successful damage calc, first base damage, then elemental check, then crit chance, then health changes, then next pokemon goes, battle calc loops, then turn ends.
 
-    players_pokemon = venusaur
-    enemy_pokemon = charizard
+    players_pokemon = players_pokemon_input
+    enemy_pokemon = enemy_pokemon_random
+
+    if players_pokemon == "charizard":
+        players_pokemon = charizard
+    elif players_pokemon == "venusaur":
+        players_pokemon = venusaur
+    elif players_pokemon == "blastoise":
+        players_pokemon = blastoise
+
+    if enemy_pokemon == "charizard":
+        enemy_pokemon = charizard
+    elif enemy_pokemon == "venusaur":
+        enemy_pokemon = venusaur
+    elif enemy_pokemon == "blastoise":
+        enemy_pokemon = blastoise
+
+    players_pokemon.load_health(True)
+    enemy_pokemon.load_health()
 
     if players_pokemon.base_stats["Speed"] > enemy_pokemon.base_stats["Speed"]:
         health_check(enemy_pokemon, players_pokemon)
 
-        players_attack = players_pokemon.moves[0]
+        if players_button_input == "Button 1":
+            player_button = players_pokemon.moves[1]
+        if players_button_input == "Button 2":
+            player_button = players_pokemon.moves[2]
+        if players_button_input == "Button 3":
+            player_button = players_pokemon.moves[3]
+        if players_button_input == "Button 4":
+            player_button = players_pokemon.moves[4]
+
+        players_attack = player_button
 
         if players_attack[0] > 0:
             print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
@@ -375,6 +438,7 @@ def battle_loop_main(players_button_input):
             enemy_pokemon.health_change(
                 damage_calc(players_pokemon, players_attack, enemy_pokemon)
             )
+            enemy_pokemon.is_dead = death_check(enemy_pokemon)
         else:
             players_pokemon.heal(heal_calc(players_pokemon, players_attack))
 
@@ -388,6 +452,7 @@ def battle_loop_main(players_button_input):
             players_pokemon.health_change(
                 damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
             )
+            players_pokemon.is_dead = death_check(players_pokemon)
         else:
             enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
 
@@ -406,12 +471,22 @@ def battle_loop_main(players_button_input):
             players_pokemon.health_change(
                 damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
             )
+            players_pokemon.is_dead = death_check(players_pokemon)
         else:
             enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
 
         health_check(enemy_pokemon, players_pokemon)
 
-        players_attack = players_pokemon.moves[0]
+        if players_button_input == "Button 1":
+            player_button = players_pokemon.moves[1]
+        if players_button_input == "Button 2":
+            player_button = players_pokemon.moves[2]
+        if players_button_input == "Button 3":
+            player_button = players_pokemon.moves[3]
+        if players_button_input == "Button 4":
+            player_button = players_pokemon.moves[4]
+
+        players_attack = player_button
 
         if players_attack[0] > 0:
             print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
@@ -419,7 +494,27 @@ def battle_loop_main(players_button_input):
             enemy_pokemon.health_change(
                 damage_calc(players_pokemon, players_attack, enemy_pokemon)
             )
+            enemy_pokemon.is_dead = death_check(enemy_pokemon)
         else:
             players_pokemon.heal(heal_calc(players_pokemon, players_attack))
 
         health_check(enemy_pokemon, players_pokemon)
+
+    players_pokemon.save_health(True)
+    enemy_pokemon.save_health()
+
+    if players_pokemon.is_dead:
+        file_path = f"/battle_files/player_{players_pokemon.name}_health.txt"
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"{file_path} deleted successfully")
+        else:
+            print(f"{file_path} does not exist")
+
+    if enemy_pokemon.is_dead:
+        file_path = f"/battle_files/enemy_{enemy_pokemon.name}_health.txt"
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"{file_path} deleted successfully")
+        else:
+            print(f"{file_path} does not exist")

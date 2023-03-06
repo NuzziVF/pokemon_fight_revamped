@@ -12,7 +12,7 @@ import pygame
 from button import Button
 import random as r
 
-from battle_loop import *
+from battle_loop import battle_loop_main
 
 # general comment
 ## tag comment for Ctrl + F
@@ -107,20 +107,21 @@ def game_loop():
     white_color = (255, 255, 255)
 
     # Chooses pokemon for enemy
-    player_pokemon_choice = 2
+    player_pokemon_choice = "venusaur"
     enemy_pokemon = enemy_pokemon_choice()
+    print(str(player_pokemon_choice) + "/" + str(enemy_pokemon))
 
     # TODO: fix dupe clause
     dupe_clause = False
 
     if enemy_pokemon == player_pokemon_choice:
-        if enemy_pokemon == 1:
+        if enemy_pokemon == "charizard":
             enemy_duplicate = load_image_charizard(False)
             dupe_clause = True
-        if enemy_pokemon == 2:
+        if enemy_pokemon == "venusaur":
             enemy_duplicate = load_image_venusaur(False)
             dupe_clause = True
-        if enemy_pokemon == 3:
+        if enemy_pokemon == "blastoise":
             enemy_duplicate = load_image_blastoise(False)
             dupe_clause = True
 
@@ -129,9 +130,9 @@ def game_loop():
 
     images = {1: load_image_charizard, 2: load_image_venusaur, 3: load_image_blastoise}
 
-    charizard_image = images.get(1)(player_pokemon_choice == 1)
-    venusaur_image = images.get(2)(player_pokemon_choice == 2)
-    blastoise_image = images.get(3)(player_pokemon_choice == 3)
+    charizard_image = images.get(1)(player_pokemon_choice == "charizard")
+    venusaur_image = images.get(2)(player_pokemon_choice == "venusaur")
+    blastoise_image = images.get(3)(player_pokemon_choice == "blastoise")
 
     # Extract the rect object from the tuple and assign its bottom attribute
     charizard_rect = charizard_image[1]
@@ -149,13 +150,13 @@ def game_loop():
         enemy_rect = enemy_duplicate[1]
         enemy_surface = enemy_duplicate[0]
 
-    if player_pokemon_choice == 1:
+    if player_pokemon_choice == "charizard":
         player_pokemon_image = charizard_rect
         player_pokemon_surface = charizard_surface
-    elif player_pokemon_choice == 2:
+    elif player_pokemon_choice == "venusaur":
         player_pokemon_image = venusaur_rect
         player_pokemon_surface = venusaur_surface
-    elif player_pokemon_choice == 3:
+    elif player_pokemon_choice == "blastoise":
         player_pokemon_image = blastoise_rect
         player_pokemon_surface = blastoise_surface
 
@@ -257,12 +258,24 @@ def game_loop():
                     # Handle enter key press
                     if buttons[selected_button_index] == button1:
                         print("Button 1 pressed!")
+                        battle_loop_main(
+                            button1.text, enemy_pokemon, player_pokemon_choice
+                        )
                     if buttons[selected_button_index] == button2:
                         print("Button 2 pressed!")
+                        battle_loop_main(
+                            button2.text, enemy_pokemon, player_pokemon_choice
+                        )
                     if buttons[selected_button_index] == button3:
                         print("Button 3 pressed!")
+                        battle_loop_main(
+                            button3.text, enemy_pokemon, player_pokemon_choice
+                        )
                     if buttons[selected_button_index] == button4:
                         print("Button 4 pressed!")
+                        battle_loop_main(
+                            button4.text, enemy_pokemon, player_pokemon_choice
+                        )
 
         # Update game state
         ## update_loops
