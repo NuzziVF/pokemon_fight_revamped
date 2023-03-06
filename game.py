@@ -107,38 +107,71 @@ def game_loop():
     white_color = (255, 255, 255)
 
     # Chooses pokemon for enemy
+    player_pokemon_choice = 2
     enemy_pokemon = enemy_pokemon_choice()
-    player_pokemon_image = 2
+
+    # TODO: fix dupe clause
+    dupe_clause = False
+
+    if enemy_pokemon == player_pokemon_choice:
+        if enemy_pokemon == 1:
+            enemy_duplicate = load_image_charizard(False)
+            dupe_clause = True
+        if enemy_pokemon == 2:
+            enemy_duplicate = load_image_venusaur(False)
+            dupe_clause = True
+        if enemy_pokemon == 3:
+            enemy_duplicate = load_image_blastoise(False)
+            dupe_clause = True
 
     # Load an image from disk
     ## images image_load
-    # for each in range(1, 3):
-    #     if player_pokemon_image == 1:
-    #         charizard_image = load_image_charizard(True)
-    #     else:
-    #         charizard_image = load_image_charizard(False)
-
-    #     if player_pokemon_image == 2:
-    #         venusaur_image = load_image_venusaur(True)
-    #     else:
-    #         venusaur_image = load_image_venusaur(False)
-    #     if player_pokemon_image == 3:
-    #         blastoise_image = load_image_blastoise(True)
-    #     else:
-    #         blastoise_image = load_image_blastoise(False)
 
     images = {1: load_image_charizard, 2: load_image_venusaur, 3: load_image_blastoise}
 
-    charizard_image = images.get(1)(player_pokemon_image == 1)
-    venusaur_image = images.get(2)(player_pokemon_image == 2)
-    blastoise_image = images.get(3)(player_pokemon_image == 3)
+    charizard_image = images.get(1)(player_pokemon_choice == 1)
+    venusaur_image = images.get(2)(player_pokemon_choice == 2)
+    blastoise_image = images.get(3)(player_pokemon_choice == 3)
+
+    # Extract the rect object from the tuple and assign its bottom attribute
+    charizard_rect = charizard_image[1]
+    charizard_surface = charizard_image[0]
+
+    # Extract the rect object from the tuple and assign its bottom attribute
+    venusaur_rect = venusaur_image[1]
+    venusaur_surface = venusaur_image[0]
+
+    # Extract the rect object from the tuple and assign its bottom attribute
+    blastoise_rect = blastoise_image[1]
+    blastoise_surface = blastoise_image[0]
+
+    if dupe_clause:
+        enemy_rect = enemy_duplicate[1]
+        enemy_surface = enemy_duplicate[0]
+
+    if player_pokemon_choice == 1:
+        player_pokemon_image = charizard_rect
+        player_pokemon_surface = charizard_surface
+    elif player_pokemon_choice == 2:
+        player_pokemon_image = venusaur_rect
+        player_pokemon_surface = venusaur_surface
+    elif player_pokemon_choice == 3:
+        player_pokemon_image = blastoise_rect
+        player_pokemon_surface = blastoise_surface
 
     if enemy_pokemon == "charizard":
-        enemy_pokemon_image = charizard_image[1]
+        enemy_pokemon_image = charizard_rect
+        enemy_pokemon_surface = charizard_surface
     elif enemy_pokemon == "venusaur":
-        enemy_pokemon_image = venusaur_image[1]
+        enemy_pokemon_image = venusaur_rect
+        enemy_pokemon_surface = venusaur_surface
     elif enemy_pokemon == "blastoise":
-        enemy_pokemon_image = blastoise_image[1]
+        enemy_pokemon_image = blastoise_rect
+        enemy_pokemon_surface = blastoise_surface
+
+    if dupe_clause:
+        enemy_pokemon_image = enemy_rect
+        enemy_pokemon_surface = enemy_surface
 
     # Set the position of each image using the Rect attributes
     enemy_position_x = 450
@@ -146,11 +179,11 @@ def game_loop():
     player_position_x = 75
     player_position_y = 200
 
-    charizard_image.left = enemy_position_x
-    charizard_image.top = enemy_position_y
+    enemy_pokemon_image.left = enemy_position_x
+    enemy_pokemon_image.top = enemy_position_y
 
-    venusaur_image.left = player_position_x
-    venusaur_image.top = player_position_y
+    player_pokemon_image.left = player_position_x
+    player_pokemon_image.top = player_position_y
 
     # Set up the buttons
     ## button_config
@@ -245,11 +278,11 @@ def game_loop():
             rect_thickness,
         )
 
-        venusaur_image.bottom = rect.top - 10
+        player_pokemon_image.bottom = rect.top - 10
 
         # Draw the image on the screen
-        screen.blit(image1, charizard_image)
-        screen.blit(image2, venusaur_image)
+        screen.blit(enemy_pokemon_surface, enemy_pokemon_image)
+        screen.blit(player_pokemon_surface, player_pokemon_image)
         # screen.blit(image3, image_rect3)
 
         for button in buttons:
