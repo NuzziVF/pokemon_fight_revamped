@@ -54,6 +54,15 @@ def play_fight(Players_mon):
 
   multiplier = 1
   
+  
+# Power: the strength of the move, measured in damage dealt to the opponent's hp.
+# Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
+# Type: the elemental type of the move, which determines its effectiveness against other types.
+# Heal Factor : The percent amount that you would heal.
+# Weather : Boolean value that tells if the move evokes a weather status.
+# Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
+# Name: the name of the move.
+  
   flamethrower = [90, 100, "Fire", 0, False, "Special", "FlameThrower"]
   dragon_breath = [60, 100, "Dragon", 0, False, "Special", "Dragon Breath"]
   roost = [0, 100, "Flying", 50, False, "Status", "Roost"]

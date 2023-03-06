@@ -1,3 +1,103 @@
+import random as r
+
+# TODO: fix giga drains healing
+
+
+def enemy_move(enemy_pokemon, players_pokemon):
+    no_heals = False
+    if enemy_pokemon.current_health < enemy_pokemon.current_health / 2:
+        for each in enemy_pokemon.moves:
+            if each[3] > 0 and each[5] == "Status":
+                return each
+            else:
+                no_heals = True
+    elif (
+        no_heals == True
+        or enemy_pokemon.current_health > enemy_pokemon.current_health / 2
+    ):
+        current_move = enemy_pokemon.moves[0]
+        for each in enemy_pokemon.moves:
+            if damage_calc(enemy_pokemon, each, players_pokemon) > damage_calc(
+                enemy_pokemon, current_move, players_pokemon
+            ):
+                current_move = each
+        return current_move
+
+
+def damage_calc(user, pokemon_move, target):
+    # Get move data
+    power = pokemon_move[0]
+    accuracy = pokemon_move[1]
+    move_type = pokemon_move[2]
+    heal_factor = pokemon_move[3]
+    category = pokemon_move[5]
+
+    # Get user and target stats
+    attack_stat = user.base_stats["Attack"]
+    defense_stat = target.base_stats["Defense"]
+    special_attack_stat = user.base_stats["Special Attack"]
+    special_defense_stat = target.base_stats["Special Defense"]
+
+    # Determine which attack stat to use based on move category
+    if category == "Physical":
+        attack = attack_stat
+        defense = defense_stat
+    else:
+        attack = special_attack_stat
+        defense = special_defense_stat
+
+    # Calculate damage
+    modifier = 1
+    # Looking to see if STAB is applicable
+    if move_type in user.type1:
+        modifier *= 1.5
+    if move_type in user.type2:
+        modifier *= 1.5
+    # Looking to see if it's super effective
+    if move_type in target.weaknesses:
+        modifier *= 2
+    if move_type in target.resistances:
+        modifier *= 0.5
+    if move_type in target.immunities:
+        modifier *= 0
+
+    if r.random() > accuracy:
+        return 0
+
+    damage = (((2 * user.level + 10) / 250) * (attack / defense) * power + 2) * modifier
+    damage = int(damage)
+    # target.current_health -= damage
+
+    if heal_factor:
+        print("test1")
+        print((heal_factor / 100) * damage)
+        user.current_health += int(((heal_factor / 100) / 2) * damage)
+        user.current_health = min(user.current_health, user.max_health)
+
+    return damage
+
+
+def heal_calc(user, pokemon_move):
+    heal_factor = pokemon_move[3]
+    heal_amount = user.max_health * (heal_factor / 100)
+    return heal_amount
+
+
+def health_check(enemy_pokemon, players_pokemon):
+    print(
+        "Enemy Pokemon: "
+        + str(enemy_pokemon.current_health)
+        + "/"
+        + str(enemy_pokemon.max_health)
+    )
+    print(
+        "Player Pokemon: "
+        + str(players_pokemon.current_health)
+        + "/"
+        + str(players_pokemon.max_health)
+    )
+
+
 class Pokemon:
     def __init__(
         self,
@@ -22,7 +122,6 @@ class Pokemon:
         self.immunities = immunities
         self.level = 50
         self.experience = 0
-        self.current_health = self.max_health
         self.status = None
         self.stat_stages = {
             "attack": 0,
@@ -32,12 +131,12 @@ class Pokemon:
             "speed": 0,
         }
         self.ivs = {
-            "hp": 0,
-            "attack": 0,
-            "defense": 0,
-            "special_attack": 0,
-            "special_defense": 0,
-            "speed": 0,
+            "hp": 31,
+            "attack": 31,
+            "defense": 31,
+            "special_attack": 31,
+            "special_defense": 31,
+            "speed": 31,
         }
         self.evs = {
             "hp": 0,
@@ -47,6 +146,7 @@ class Pokemon:
             "special_defense": 0,
             "speed": 0,
         }
+        self.current_health = self.max_health
 
     @property
     def max_health(self):
@@ -147,8 +247,15 @@ class Pokemon:
             + 5
         )
 
+    def health_change(self, damage):
+        self.current_health -= damage
 
-# Power: the strength of the move, measured in damage dealt to the opponent's HP.
+    def heal(self, heal_amount):
+        self.current_health += heal_amount
+        self.current_health = min(self.current_health, self.max_health)
+
+
+# Power: the strength of the move, measured in damage dealt to the opponent's hp.
 # Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
 # Type: the elemental type of the move, which determines its effectiveness against other types.
 # Heal Factor : The percent amount that you would heal.
@@ -172,7 +279,7 @@ rapid_spin = [50, 100, "Normal", 0, False, "Physical", "Rapid Spin"]
 
 # Define the base stats, abilities, moves, and type strengths/weaknesses for each Pokémon
 charizard_base_stats = {
-    "HP": 78,
+    "hp": 78,
     "Attack": 84,
     "Defense": 78,
     "Special Attack": 109,
@@ -187,7 +294,7 @@ charizard_resistances = ["Fire", "Grass", "Bug", "Steel", "Fairy"]
 charizard_immunities = ["Ground"]
 
 venusaur_base_stats = {
-    "HP": 80,
+    "hp": 80,
     "Attack": 82,
     "Defense": 83,
     "Special Attack": 100,
@@ -201,7 +308,7 @@ venusaur_resistances = ["Water", "Electric", "Grass", "Fighting", "Fairy"]
 venusaur_immunities = []
 
 blastoise_base_stats = {
-    "HP": 79,
+    "hp": 79,
     "Attack": 83,
     "Defense": 100,
     "Special Attack": 85,
@@ -250,3 +357,70 @@ blastoise = Pokemon(
     resistances=blastoise_resistances,
     immunities=blastoise_immunities,
 )
+
+
+### battle order
+# press enter, choose move, speed check, battle calc happens, accuracy check happens first, if successful damage calc, first base damage, then elemental check, then crit chance, then health changes, then next pokemon goes, battle calc loops, then turn ends.
+
+players_pokemon = venusaur
+enemy_pokemon = charizard
+
+if players_pokemon.base_stats["Speed"] > enemy_pokemon.base_stats["Speed"]:
+    health_check(enemy_pokemon, players_pokemon)
+
+    players_attack = players_pokemon.moves[0]
+
+    if players_attack[0] > 0:
+        print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
+        # This updates the health
+        enemy_pokemon.health_change(
+            damage_calc(players_pokemon, players_attack, enemy_pokemon)
+        )
+    else:
+        players_pokemon.heal(heal_calc(players_pokemon, players_attack))
+
+    health_check(enemy_pokemon, players_pokemon)
+
+    enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+
+    if enemy_attack[0] > 0:
+        print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
+        # This updates the health
+        players_pokemon.health_change(
+            damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
+        )
+    else:
+        enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
+
+    health_check(enemy_pokemon, players_pokemon)
+
+else:
+    # this chooses the enemy's move
+    enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+
+    health_check(enemy_pokemon, players_pokemon)
+    print(enemy_attack[6])
+
+    if enemy_attack[0] > 0:
+        print(damage_calc(enemy_pokemon, enemy_attack, players_pokemon))
+        # This updates the health
+        players_pokemon.health_change(
+            damage_calc(enemy_pokemon, enemy_attack, players_pokemon)
+        )
+    else:
+        enemy_pokemon.heal(heal_calc(enemy_pokemon, enemy_attack))
+
+    health_check(enemy_pokemon, players_pokemon)
+
+    players_attack = players_pokemon.moves[0]
+
+    if players_attack[0] > 0:
+        print(damage_calc(players_pokemon, players_attack, enemy_pokemon))
+        # This updates the health
+        enemy_pokemon.health_change(
+            damage_calc(players_pokemon, players_attack, enemy_pokemon)
+        )
+    else:
+        players_pokemon.heal(heal_calc(players_pokemon, players_attack))
+
+    health_check(enemy_pokemon, players_pokemon)
