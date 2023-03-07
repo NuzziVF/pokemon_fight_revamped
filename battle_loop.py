@@ -34,6 +34,10 @@ def battle_loop_main(
 
         players_attack = player_button
 
+        enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
+
+        print(enemy_attack)
+
         print(f"{players_pokemon.name} used {players_attack[6]}")
 
         if players_pokemon.is_dead == False:
@@ -52,8 +56,6 @@ def battle_loop_main(
                 print(
                     f"{players_pokemon.name} Healed {heal_calc(players_pokemon, players_attack)}"
                 )
-
-        enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
 
         if enemy_pokemon.is_dead == False:
             print(f"{enemy_pokemon.name} used {enemy_attack[6]}")

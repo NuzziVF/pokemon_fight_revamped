@@ -168,7 +168,7 @@ def game_loop():
         "Speed": 80,
     }
     venusaur_abilities = ["Overgrow", "Chlorophyll"]
-    venusaur_moves = [giga_drain, sludge_bomb, leech_seed, synthesis]
+    venusaur_moves = [splash, sludge_bomb, leech_seed, synthesis]
     venusaur_weaknesses = ["Fire", "Flying", "Ice", "Psychic"]
     venusaur_resistances = ["Water", "Electric", "Grass", "Fighting", "Fairy"]
     venusaur_immunities = []
@@ -189,9 +189,9 @@ def game_loop():
 
     magikarp_base_stats = {
         "hp": 300,
-        "Attack": 10,
+        "Attack": 85,
         "Defense": 200,
-        "Special Attack": 15,
+        "Special Attack": 85,
         "Special Defense": 200,
         "Speed": 80,
     }
@@ -201,7 +201,7 @@ def game_loop():
         type1="Water",
         base_stats=magikarp_base_stats,
         abilities=["Swift Swim", "Rattled"],
-        moves=[splash, hydro_pump, splash, splash],
+        moves=[splash, hydro_pump, flamethrower, synthesis],
         weaknesses=["Electric", "Grass"],
         resistances=["Fire", "Water", "Ice", "Steel"],
         immunities=[],
@@ -483,22 +483,18 @@ def game_loop():
                 elif event.key == pygame.K_RETURN:
                     # Handle enter key press
                     if buttons[selected_button_index] == button1:
-                        print(button1.text)
                         battle_loop_main(
                             button1.text, enemy_pokemon_input, player_pokemon_input
                         )
                     if buttons[selected_button_index] == button2:
-                        print(button2.text)
                         result = battle_loop_main(
                             button2.text, enemy_pokemon_input, player_pokemon_input
                         )
                     if buttons[selected_button_index] == button3:
-                        print(button3.text)
                         result = battle_loop_main(
                             button3.text, enemy_pokemon_input, player_pokemon_input
                         )
                     if buttons[selected_button_index] == button4:
-                        print(button4.text)
                         result = battle_loop_main(
                             button4.text, enemy_pokemon_input, player_pokemon_input
                         )

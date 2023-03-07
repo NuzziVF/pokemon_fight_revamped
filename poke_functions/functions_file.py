@@ -159,6 +159,7 @@ class Pokemon:
             self.current_health = 0
 
     def heal(self, heal_amount):
+        print("healing")
         self.current_health += heal_amount
         self.current_health = min(self.current_health, self.max_health)
 
@@ -247,29 +248,72 @@ def damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
     # target.current_health -= damage
 
     if heal_factor:
+        print("accidental healing")
         user.current_health += int(((heal_factor / 100) / 2) * damage)
         user.current_health = min(user.current_health, user.max_health)
 
     return damage
 
 
+def fake_damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
+    # Get move data
+    power = pokemon_move[0]
+    accuracy = pokemon_move[1]
+    move_type = pokemon_move[2]
+    category = pokemon_move[5]
+
+    # Get user and target stats
+    attack_stat = user.base_stats["Attack"]
+    defense_stat = target.base_stats["Defense"]
+    special_attack_stat = user.base_stats["Special Attack"]
+    special_defense_stat = target.base_stats["Special Defense"]
+
+    # Determine which attack stat to use based on move category
+    if category == "Physical":
+        attack = attack_stat
+        defense = defense_stat
+    else:
+        attack = special_attack_stat
+        defense = special_defense_stat
+
+    # Calculate damage
+    modifier = 1
+    # Looking to see if STAB is applicable
+    if move_type in user.type1:
+        modifier *= 1.5
+    if user.type2 is not None and move_type in user.type2:
+        modifier *= 1.5
+    # Looking to see if it's super effective
+    if move_type in target.weaknesses:
+        modifier *= 2
+    if move_type in target.resistances:
+        modifier *= 0.5
+    if move_type in target.immunities:
+        modifier *= 0
+
+    if r.random() > accuracy:
+        return 0
+
+    damage = (((2 * user.level + 10) / 250) * (attack / defense) * power + 2) * modifier
+    damage = int(damage)
+    # target.current_health -= damage
+
+    return damage
+
+
 def enemy_move(enemy_pokemon: Pokemon, players_pokemon: Pokemon):
-    no_heals = False
-    if int(enemy_pokemon.current_health) < int(enemy_pokemon.current_health) / 2:
+    if int(enemy_pokemon.current_health) < int(enemy_pokemon.max_health) / 2:
         for each in enemy_pokemon.moves:
             if each[3] > 0 and each[5] == "Status":
                 return each
-            else:
-                no_heals = True
-    elif (
-        no_heals == True
-        or int(enemy_pokemon.current_health) > int(enemy_pokemon.current_health) / 2
-    ):
+
+    # elif int(enemy_pokemon.current_health) > int(enemy_pokemon.max_health) / 2:
+    else:
         current_move = enemy_pokemon.moves[0]
         for each in enemy_pokemon.moves:
-            if damage_calc(enemy_pokemon, each, players_pokemon) > damage_calc(
-                enemy_pokemon, current_move, players_pokemon
-            ):
+            if fake_damage_calc(
+                enemy_pokemon, each, players_pokemon
+            ) > fake_damage_calc(enemy_pokemon, current_move, players_pokemon):
                 current_move = each
         return current_move
 
