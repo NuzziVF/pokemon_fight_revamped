@@ -72,6 +72,18 @@ def load_image_blastoise(is_player_mon):
     return image, blastoise_rect
 
 
+def load_image_magikarp(is_player_mon):
+    image = pygame.image.load("images/magikarp.png")
+
+    if is_player_mon:
+        # TODO: mess around with positions to get this to change according to the player specifically.
+        image = pygame.transform.flip(image, True, False)
+
+    # Get the rectangle representing the loaded image
+    magikarp_rect = image.get_rect()
+    return image, magikarp_rect
+
+
 def game_loop():
     # Initialize Pygame
     ## init
@@ -83,7 +95,7 @@ def game_loop():
     screen_width = 800
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("My Pygame")
+    pygame.display.set_caption("Pokemon Fight Revamped")
 
     # Set up the clock
     ## clock time
@@ -129,6 +141,7 @@ def game_loop():
     ice_beam = [90, 100, "Ice", 0, False, "Special", "Ice Beam"]
     earthquake = [100, 100, "Ground", 0, False, "Physical", "Earthquake"]
     rapid_spin = [50, 100, "Normal", 0, False, "Physical", "Rapid Spin"]
+    splash = [0, 100, "Water", 0, False, "Physical", "Splash"]
 
     # Define the base stats, abilities, moves, and type strengths/weaknesses for each Pokémon
     charizard_base_stats = {
@@ -174,6 +187,27 @@ def game_loop():
     blastoise_resistances = ["Water", "Fire", "Ice", "Steel"]
     blastoise_immunities = []
 
+    magikarp_base_stats = {
+        "hp": 300,
+        "Attack": 10,
+        "Defense": 200,
+        "Special Attack": 15,
+        "Special Defense": 200,
+        "Speed": 80,
+    }
+
+    magikarp = Pokemon(
+        name="Magikarp",
+        type1="Water",
+        base_stats=magikarp_base_stats,
+        abilities=["Swift Swim", "Rattled"],
+        moves=[splash, hydro_pump, splash, splash],
+        weaknesses=["Electric", "Grass"],
+        resistances=["Fire", "Water", "Ice", "Steel"],
+        immunities=[],
+        type2=None,
+    )
+
     # Create Charizard, Venusaur, and Blastoise Pokémon objects
     charizard = Pokemon(
         name="Charizard",
@@ -212,7 +246,9 @@ def game_loop():
     )
 
     # Chooses pokemon for enemy
-    player_pokemon_choice = "charizard"
+
+    player_pokemon_choice = "magikarp"
+
     enemy_pokemon = enemy_pokemon_choice()
     enemy_pokemon_input = ""
     if player_pokemon_choice == "charizard":
@@ -221,6 +257,8 @@ def game_loop():
         player_pokemon_input = venusaur
     elif player_pokemon_choice == "blastoise":
         player_pokemon_input = blastoise
+    elif player_pokemon_choice == "magikarp":
+        player_pokemon_input = magikarp
 
     if player_pokemon_choice != enemy_pokemon:
         if enemy_pokemon == "charizard":
@@ -286,11 +324,17 @@ def game_loop():
     # Load an image from disk
     ## images image_load
 
-    images = {1: load_image_charizard, 2: load_image_venusaur, 3: load_image_blastoise}
+    images = {
+        1: load_image_charizard,
+        2: load_image_venusaur,
+        3: load_image_blastoise,
+        4: load_image_magikarp,
+    }
 
     charizard_image = images.get(1)(player_pokemon_choice == "charizard")
     venusaur_image = images.get(2)(player_pokemon_choice == "venusaur")
     blastoise_image = images.get(3)(player_pokemon_choice == "blastoise")
+    magikarp_image = images.get(4)(player_pokemon_choice == "magikarp")
 
     # Extract the rect object from the tuple and assign its bottom attribute
     charizard_rect = charizard_image[1]
@@ -303,6 +347,10 @@ def game_loop():
     # Extract the rect object from the tuple and assign its bottom attribute
     blastoise_rect = blastoise_image[1]
     blastoise_surface = blastoise_image[0]
+
+    # Extract the rect object from the tuple and assign its bottom attribute
+    magikarp_rect = magikarp_image[1]
+    magikarp_surface = magikarp_image[0]
 
     if dupe_clause:
         enemy_rect = enemy_duplicate[1]
@@ -317,6 +365,9 @@ def game_loop():
     elif player_pokemon_choice == "blastoise":
         player_pokemon_image = blastoise_rect
         player_pokemon_surface = blastoise_surface
+    elif player_pokemon_choice == "magikarp":
+        player_pokemon_image = magikarp_rect
+        player_pokemon_surface = magikarp_surface
 
     if enemy_pokemon == "charizard":
         enemy_pokemon_image = charizard_rect
@@ -327,6 +378,9 @@ def game_loop():
     elif enemy_pokemon == "blastoise":
         enemy_pokemon_image = blastoise_rect
         enemy_pokemon_surface = blastoise_surface
+    elif enemy_pokemon == "magikarp":
+        enemy_pokemon_image = magikarp_rect
+        enemy_pokemon_surface = magikarp_surface
 
     if dupe_clause:
         enemy_pokemon_image = enemy_rect

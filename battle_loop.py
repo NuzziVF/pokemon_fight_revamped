@@ -23,8 +23,6 @@ def battle_loop_main(
     if players_pokemon.base_stats["Speed"] >= enemy_pokemon.base_stats["Speed"]:
         print(f"{players_pokemon.name} Goes first")
 
-        health_check(enemy_pokemon, players_pokemon)
-
         if players_button_input == players_pokemon.moves[0][6]:
             player_button = players_pokemon.moves[0]
         if players_button_input == players_pokemon.moves[1][6]:
@@ -57,9 +55,8 @@ def battle_loop_main(
 
         enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
 
-        print(f"{enemy_pokemon.name} used {enemy_attack[6]}")
-
         if enemy_pokemon.is_dead == False:
+            print(f"{enemy_pokemon.name} used {enemy_attack[6]}")
             if enemy_attack[0] > 0:
                 # This updates the health
                 players_pokemon.health_change(
@@ -75,17 +72,17 @@ def battle_loop_main(
                 print(
                     f"{enemy_pokemon.name} Healed {heal_calc(enemy_pokemon, enemy_attack)}"
                 )
+
+        health_check(enemy_pokemon, players_pokemon)
 
     else:
         print(f"{enemy_pokemon.name} Goes first")
 
-        health_check(enemy_pokemon, players_pokemon)
         # this chooses the enemy's move
         enemy_attack = enemy_move(enemy_pokemon, players_pokemon)
 
-        print(f"{enemy_pokemon.name} used {enemy_attack[6]}")
-
         if enemy_pokemon.is_dead == False:
+            print(f"{enemy_pokemon.name} used {enemy_attack[6]}")
             if enemy_attack[0] > 0:
                 # This updates the health
                 players_pokemon.health_change(
@@ -131,3 +128,4 @@ def battle_loop_main(
                 print(
                     f"{players_pokemon.name} Healed {heal_calc(players_pokemon, players_attack)}"
                 )
+        health_check(enemy_pokemon, players_pokemon)
