@@ -705,6 +705,8 @@ def game_loop(selection: str):
             * BAR_WIDTH
         )
 
+        test_func(screen)
+
         # Draw the health bar
         health_bar_rect = pygame.Rect(460, 300, health_bar_width, BAR_HEIGHT)
         pygame.draw.rect(screen, green_color, health_bar_rect)

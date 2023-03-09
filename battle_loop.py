@@ -1,7 +1,17 @@
 import random as r
 from poke_functions.functions_file import *
+import pygame
 
 # TODO: fix giga drains healing
+
+
+def test_func(screen: pygame.Surface):
+    # Initialize Pygame
+    pygame.init()
+    rect_surface = pygame.Surface((200, 150))
+    rect_surface.fill((255, 0, 0))
+
+    screen.blit(rect_surface, (100, 100))
 
 
 def player_goes_first(
