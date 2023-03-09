@@ -15,7 +15,7 @@ class Button:
         self.selected_color = selected_color
         self.selected = False
 
-    def draw(self, surface):
+    def draw(self, surface: Surface):
         black_color = (0, 0, 0)
         # Draw the button
         pygame.draw.rect(

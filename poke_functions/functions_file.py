@@ -3,6 +3,28 @@ import os
 from typing import List
 
 
+# Power: the strength of the move, measured in damage dealt to the opponent's hp.
+# Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
+# Type: the elemental type of the move, which determines its effectiveness against other types.
+# Heal Factor : The percent amount that you would heal.
+# Weather : Boolean value that tells if the move evokes a weather status.
+# Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
+# Name: the name of the move.
+
+
+class Move:
+    def __init__(
+        self, power, accuracy, move_type, heal_factor, weather, category, name
+    ):
+        self.power = power
+        self.accuracy = accuracy
+        self.move_type = move_type
+        self.heal_factor = heal_factor
+        self.weather = weather
+        self.category = category
+        self.name = name
+
+
 class Pokemon:
     def __init__(
         self,
@@ -203,13 +225,49 @@ class Pokemon:
             f.write(str(self.current_health))
 
 
-def damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
+class Turn:
+    def __init__(
+        self,
+        turn_count,
+        whose_first,
+        players_pokemon: Pokemon,
+        players_move: List,
+        enemies_pokemon: Pokemon,
+        enemies_move: List,
+    ):
+        self.turn_count = turn_count
+        self.whose_first = whose_first
+        self.players_pokemon = players_pokemon
+        self.players_move = players_move
+        self.enemies_pokemon = enemies_pokemon
+        self.enemies_move = enemies_move
+
+    def death_flag(self):
+        return self.players_pokemon.death_check()
+
+
+flamethrower = Move(90, 100, "Fire", 0, False, "Special", "Flamethrower")
+air_slash = Move(75, 95, "Flying", 0, False, "Special", "Air Slash")
+dragon_pulse = Move(85, 100, "Dragon", 0, False, "Special", "Dragon Pulse")
+roost = Move(0, 100, "Flying", 50, False, "Status", "Roost")
+giga_drain = Move(75, 100, "Grass", 50, False, "Special", "Giga Drain")
+sludge_bomb = Move(90, 100, "Poison", 0, False, "Special", "Sludge Bomb")
+leech_seed = Move(0, 90, "Grass", 0, False, "Status", "Leech Seed")
+synthesis = Move(0, 100, "Grass", 50, False, "Status", "Synthesis")
+hydro_pump = Move(110, 80, "Water", 0, False, "Special", "Hydro Pump")
+ice_beam = Move(90, 100, "Ice", 0, False, "Special", "Ice Beam")
+earthquake = Move(100, 100, "Ground", 0, False, "Physical", "Earthquake")
+rapid_spin = Move(50, 100, "Normal", 0, False, "Physical", "Rapid Spin")
+splash = Move(0, 100, "Water", 0, False, "Physical", "Splash")
+
+
+def damage_calc(user: Pokemon, pokemon_move: Move, target: Pokemon):
     # Get move data
-    power = pokemon_move[0]
-    accuracy = pokemon_move[1]
-    move_type = pokemon_move[2]
-    heal_factor = pokemon_move[3]
-    category = pokemon_move[5]
+    power = pokemon_move.power
+    accuracy = pokemon_move.accuracy
+    move_type = pokemon_move.move_type
+    heal_factor = pokemon_move.heal_factor
+    category = pokemon_move.category
 
     # Get user and target stats
     attack_stat = user.base_stats["Attack"]
@@ -257,10 +315,10 @@ def damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
 
 def fake_damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
     # Get move data
-    power = pokemon_move[0]
-    accuracy = pokemon_move[1]
-    move_type = pokemon_move[2]
-    category = pokemon_move[5]
+    power = pokemon_move.power
+    accuracy = pokemon_move.accuracy
+    move_type = pokemon_move.move_type
+    category = pokemon_move.category
 
     # Get user and target stats
     attack_stat = user.base_stats["Attack"]
@@ -304,7 +362,7 @@ def fake_damage_calc(user: Pokemon, pokemon_move: List, target: Pokemon):
 def enemy_move(enemy_pokemon: Pokemon, players_pokemon: Pokemon):
     if int(enemy_pokemon.current_health) < int(enemy_pokemon.max_health) / 2:
         for each in enemy_pokemon.moves:
-            if each[3] > 0 and each[5] == "Status":
+            if each.heal_factor > 0 and each.category == "Status":
                 return each
 
     # elif int(enemy_pokemon.current_health) > int(enemy_pokemon.max_health) / 2:
@@ -318,8 +376,8 @@ def enemy_move(enemy_pokemon: Pokemon, players_pokemon: Pokemon):
         return current_move
 
 
-def heal_calc(user: Pokemon, pokemon_move: List):
-    heal_factor = pokemon_move[3]
+def heal_calc(user: Pokemon, pokemon_move: Move):
+    heal_factor = pokemon_move.heal_factor
     heal_amount = user.max_health * (heal_factor / 100)
     return heal_amount
 

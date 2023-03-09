@@ -9,16 +9,54 @@
 
 
 import pygame
-from poke_functions.button import Button
+import sys
 import random as r
 
-from poke_functions.functions_file import Pokemon
-from battle_loop import battle_loop_main
+from poke_functions.button import Button
+from poke_functions.functions_file import *
+from battle_loop import *
 
 # general comment
 ## tag comment for Ctrl + F
 
 ## available tags: screen_config clock time rectangle_config rect_placement color_variables images image_load button_config game_loop key_input input
+
+## color_variables
+red_color = (255, 0, 0)
+green_color = (0, 255, 0)
+black_color = (0, 0, 0)
+white_color = (255, 255, 255)
+
+screen_width = 800
+screen_height = 600
+
+button_width = 200
+button_height = 50
+button_margin = 20
+
+
+# Power: the strength of the move, measured in damage dealt to the opponent's hp.
+# Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
+# Type: the elemental type of the move, which determines its effectiveness against other types.
+# Heal Factor : The percent amount that you would heal.
+# Weather : Boolean value that tells if the move evokes a weather status.
+# Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
+# Name: the name of the move.
+
+
+flamethrower = Move(90, 100, "Fire", 0, False, "Special", "Flamethrower")
+air_slash = Move(75, 95, "Flying", 0, False, "Special", "Air Slash")
+dragon_pulse = Move(85, 100, "Dragon", 0, False, "Special", "Dragon Pulse")
+roost = Move(0, 100, "Flying", 50, False, "Status", "Roost")
+giga_drain = Move(75, 100, "Grass", 50, False, "Special", "Giga Drain")
+sludge_bomb = Move(90, 100, "Poison", 0, False, "Special", "Sludge Bomb")
+leech_seed = Move(0, 90, "Grass", 0, False, "Status", "Leech Seed")
+synthesis = Move(0, 100, "Grass", 50, False, "Status", "Synthesis")
+hydro_pump = Move(110, 80, "Water", 0, False, "Special", "Hydro Pump")
+ice_beam = Move(90, 100, "Ice", 0, False, "Special", "Ice Beam")
+earthquake = Move(100, 100, "Ground", 0, False, "Physical", "Earthquake")
+rapid_spin = Move(50, 100, "Normal", 0, False, "Physical", "Rapid Spin")
+splash = Move(0, 100, "Water", 0, False, "Physical", "Splash")
 
 
 def enemy_pokemon_choice():
@@ -84,22 +122,180 @@ def load_image_magikarp(is_player_mon):
     return image, magikarp_rect
 
 
-def game_loop():
+# Define the menu
+def menu():
+    # Call the menu function to start the game
+    pygame.init()
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Menu")
+
+    # Set up the clock
+    ## clock time
+    clock = pygame.time.Clock()
+
+    # Draw the menu screen
+    screen.fill((255, 255, 255))
+    # Set up the buttons
+    ## button_config
+    button_x = (screen_width - button_width) // 2
+    button_y = (screen_height - button_height) // 2
+
+    menu_start = Button(
+        (button_x),
+        button_y,
+        button_width,
+        button_height,
+        "Start Game",
+        white_color,
+        black_color,
+    )
+    menu_quit = Button(
+        (button_x),
+        button_y + 75,
+        button_width,
+        button_height,
+        "Quit Menu",
+        white_color,
+        black_color,
+    )
+
+    buttons = [menu_start, menu_quit]
+    selected_button_index = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                # Handle up arrow key press
+                if event.key == pygame.K_UP:
+                    selected_button_index = (selected_button_index - 1) % len(buttons)
+                # Handle down arrow key press
+                if event.key == pygame.K_DOWN:
+                    selected_button_index = (selected_button_index + 1) % len(buttons)
+                elif event.key == pygame.K_RETURN:
+                    if buttons[selected_button_index] == menu_start:
+                        return "start_game"
+                    if buttons[selected_button_index] == menu_quit:
+                        pygame.quit()
+                        sys.exit()
+
+        ## update_loops
+        for i, button in enumerate(buttons):
+            button.selected = i == selected_button_index
+
+        # Draw the Menu
+        for each in buttons:
+            each.draw(screen)
+
+        pygame.display.update()
+
+        # Set the FPS
+        clock.tick(60)
+
+
+# Define the menu
+def pokemon_selector():
+    # Call the menu function to start the game
+    pygame.init()
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Selector")
+
+    # Set up the clock
+    ## clock time
+    clock = pygame.time.Clock()
+
+    # Draw the menu screen
+    screen.fill((255, 255, 255))
+    # Set up the buttons
+    ## button_config
+    button_x = (screen_width - button_width) // 2
+    button_y = (screen_height - button_height) // 2
+
+    selector_charizard = "Charizard"
+    selector_venusaur = "Venusaur"
+    selector_blastoise = "Blastoise"
+
+    menu_charizard = Button(
+        (button_x),
+        button_y - 75,
+        button_width,
+        button_height,
+        selector_charizard,
+        white_color,
+        black_color,
+    )
+    menu_venusaur = Button(
+        (button_x),
+        button_y,
+        button_width,
+        button_height,
+        selector_venusaur,
+        white_color,
+        black_color,
+    )
+    menu_blastoise = Button(
+        (button_x),
+        button_y + 75,
+        button_width,
+        button_height,
+        selector_blastoise,
+        white_color,
+        black_color,
+    )
+
+    buttons = [menu_charizard, menu_venusaur, menu_blastoise]
+    selected_button_index = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                # Handle up arrow key press
+                if event.key == pygame.K_UP:
+                    selected_button_index = (selected_button_index - 1) % len(buttons)
+                # Handle down arrow key press
+                if event.key == pygame.K_DOWN:
+                    selected_button_index = (selected_button_index + 1) % len(buttons)
+                elif event.key == pygame.K_RETURN:
+                    return buttons[selected_button_index].text
+
+        ## update_loops
+        for i, button in enumerate(buttons):
+            button.selected = i == selected_button_index
+
+        # Draw the Menu
+        for each in buttons:
+            each.draw(screen)
+
+        pygame.display.update()
+
+        # Set the FPS
+        clock.tick(60)
+
+
+def game_loop(selection: str):
     # Initialize Pygame
     ## init
     pygame.init()
 
     # Set up the screen
     ## screen_config
-
-    screen_width = 800
-    screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pokemon Fight Revamped")
 
     # Set up the clock
     ## clock time
     clock = pygame.time.Clock()
+
+    # Create a font object
+    font = pygame.font.Font(None, 28)
+
+    # Create a text surface
+    text_surface = font.render("Move used: ", True, (255, 255, 255))
 
     # Set up the rectangle
     ## rectangle_config rect_placement
@@ -113,35 +309,7 @@ def game_loop():
     )
     rect_thickness = 2
 
-    ## color_variables
-    red_color = (255, 0, 0)
-    green_color = (0, 255, 0)
-    black_color = (0, 0, 0)
-    white_color = (255, 255, 255)
-
     # Setting up pokemon:
-
-    # Power: the strength of the move, measured in damage dealt to the opponent's hp.
-    # Accuracy: the likelihood of the move hitting the opponent, measured as a percentage (e.g. 90% accuracy).
-    # Type: the elemental type of the move, which determines its effectiveness against other types.
-    # Heal Factor : The percent amount that you would heal.
-    # Weather : Boolean value that tells if the move evokes a weather status.
-    # Category: the classification of the move as either "Physical" or "Special", which determines which of the user's stats (Attack or Special Attack) is used to calculate damage.
-    # Name: the name of the move.
-
-    flamethrower = [90, 100, "Fire", 0, False, "Special", "Flamethrower"]
-    air_slash = [75, 95, "Flying", 0, False, "Special", "Air Slash"]
-    dragon_pulse = [85, 100, "Dragon", 0, False, "Special", "Dragon Pulse"]
-    roost = [0, 100, "Flying", 50, False, "Status", "Roost"]
-    giga_drain = [75, 100, "Grass", 50, False, "Special", "Giga Drain"]
-    sludge_bomb = [90, 100, "Poison", 0, False, "Special", "Sludge Bomb"]
-    leech_seed = [0, 90, "Grass", 0, False, "Status", "Leech Seed"]
-    synthesis = [0, 100, "Grass", 50, False, "Status", "Synthesis"]
-    hydro_pump = [110, 80, "Water", 0, False, "Special", "Hydro Pump"]
-    ice_beam = [90, 100, "Ice", 0, False, "Special", "Ice Beam"]
-    earthquake = [100, 100, "Ground", 0, False, "Physical", "Earthquake"]
-    rapid_spin = [50, 100, "Normal", 0, False, "Physical", "Rapid Spin"]
-    splash = [0, 100, "Water", 0, False, "Physical", "Splash"]
 
     # Define the base stats, abilities, moves, and type strengths/weaknesses for each Pokémon
     charizard_base_stats = {
@@ -168,7 +336,7 @@ def game_loop():
         "Speed": 80,
     }
     venusaur_abilities = ["Overgrow", "Chlorophyll"]
-    venusaur_moves = [splash, sludge_bomb, leech_seed, synthesis]
+    venusaur_moves = [giga_drain, sludge_bomb, leech_seed, synthesis]
     venusaur_weaknesses = ["Fire", "Flying", "Ice", "Psychic"]
     venusaur_resistances = ["Water", "Electric", "Grass", "Fighting", "Fairy"]
     venusaur_immunities = []
@@ -247,6 +415,7 @@ def game_loop():
 
     # Chooses pokemon for enemy
 
+    # player_pokemon_choice = selection
     player_pokemon_choice = "magikarp"
 
     enemy_pokemon = enemy_pokemon_choice()
@@ -406,15 +575,12 @@ def game_loop():
 
     # Set up the buttons
     ## button_config
-    button_width = 200
-    button_height = 50
-    button_margin = 20
     button1 = Button(
         (screen_width / 4 - button_width / 4) - 100,
         screen_height / 1.205 - button_height - button_margin,
         button_width,
         button_height,
-        player_pokemon_input.moves[0][6],
+        player_pokemon_input.moves[0].name,
         white_color,
         black_color,
     )
@@ -423,7 +589,7 @@ def game_loop():
         screen_height / 1.205 + button_margin,
         button_width,
         button_height,
-        player_pokemon_input.moves[1][6],
+        player_pokemon_input.moves[1].name,
         white_color,
         black_color,
     )
@@ -432,7 +598,7 @@ def game_loop():
         screen_height / 1.205 - button_height - button_margin,
         button_width,
         button_height,
-        player_pokemon_input.moves[2][6],
+        player_pokemon_input.moves[2].name,
         white_color,
         black_color,
     )
@@ -441,7 +607,7 @@ def game_loop():
         screen_height / 1.205 + button_margin,
         button_width,
         button_height,
-        player_pokemon_input.moves[3][6],
+        player_pokemon_input.moves[3].name,
         white_color,
         black_color,
     )
@@ -476,10 +642,10 @@ def game_loop():
                     selected_button_index = (selected_button_index + 1) % len(buttons)
                 elif event.key == pygame.K_LEFT:
                     # Handle left arrow key press
-                    pass
+                    selected_button_index = (selected_button_index - 2) % len(buttons)
                 elif event.key == pygame.K_RIGHT:
                     # Handle right arrow key press
-                    pass
+                    selected_button_index = (selected_button_index + 2) % len(buttons)
                 elif event.key == pygame.K_RETURN:
                     # Handle enter key press
                     if buttons[selected_button_index] == button1:
@@ -522,15 +688,15 @@ def game_loop():
         )
 
         # Draw the health bar
-        health_bar_rect = pygame.Rect(100, 100, health_bar_width, BAR_HEIGHT)
+        health_bar_rect = pygame.Rect(125, 100, health_bar_width, BAR_HEIGHT)
         pygame.draw.rect(screen, green_color, health_bar_rect)
 
         # Draw the border of the health bar
-        border_rect = pygame.Rect(100, 100, BAR_WIDTH, BAR_HEIGHT)
+        border_rect = pygame.Rect(125, 100, BAR_WIDTH, BAR_HEIGHT)
         pygame.draw.rect(screen, red_color, border_rect, 2)
 
         # Draw the border of the health bar
-        border_rect = pygame.Rect(100, 100, BAR_WIDTH, BAR_HEIGHT)
+        border_rect = pygame.Rect(125, 100, BAR_WIDTH, BAR_HEIGHT)
         pygame.draw.rect(screen, black_color, border_rect, 2)
 
         # Calculate the width of the health bar
@@ -554,7 +720,12 @@ def game_loop():
         # Draw the image on the screen
         screen.blit(enemy_pokemon_surface, enemy_pokemon_image)
         screen.blit(player_pokemon_surface, player_pokemon_image)
-        # screen.blit(image3, image_rect3)
+        # Blit the text surface onto the screen
+        screen.blit(text_surface, (50, 50))
+
+        # Update the text surface with the move used during the game
+        move_used = "blow"
+        text_surface = font.render("Move used: " + move_used, True, black_color)
 
         for button in buttons:
             button.draw(screen)

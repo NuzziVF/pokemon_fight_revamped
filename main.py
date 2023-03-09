@@ -1,8 +1,13 @@
 import pygame
-from game import game_loop
+from game import *
+
 
 # Initialize Pygame
 pygame.init()
 
-# Call game loop
-game_loop()
+selection = menu()
+if selection == "start_game":
+    # Call game loop
+    selector = pokemon_selector().lower()
+    print(selector)
+    game_loop(selector)
