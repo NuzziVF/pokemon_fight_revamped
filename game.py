@@ -415,8 +415,8 @@ def game_loop(selection: str):
 
     # Chooses pokemon for enemy
 
-    # player_pokemon_choice = selection
-    player_pokemon_choice = "magikarp"
+    player_pokemon_choice = selection
+    # player_pokemon_choice = "magikarp"
 
     enemy_pokemon = enemy_pokemon_choice()
     enemy_pokemon_input = ""
