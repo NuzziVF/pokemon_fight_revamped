@@ -1,13 +1,3 @@
-# import sys
-# sys.path.insert(0, '../python_battle_files')
-
-# import type_adv
-
-# type_adv.grass_check()
-
-# example.my_function()
-
-
 import pygame
 import sys
 import random as r
@@ -61,7 +51,6 @@ splash = Move(0, 100, "Water", 0, False, "Physical", "Splash")
 
 def enemy_pokemon_choice():
     enemy_choice = r.randint(1, 3)
-    print(enemy_choice)
     if enemy_choice == 1:
         return "charizard"
     if enemy_choice == 2:
@@ -474,8 +463,6 @@ def game_loop(selection: str):
                 immunities=blastoise_immunities,
             )
 
-    print(str(player_pokemon_choice) + "/" + str(enemy_pokemon))
-
     # TODO: fix dupe clause
     dupe_clause = False
 
@@ -649,21 +636,53 @@ def game_loop(selection: str):
                 elif event.key == pygame.K_RETURN:
                     # Handle enter key press
                     if buttons[selected_button_index] == button1:
-                        battle_loop_main(
-                            button1.text, enemy_pokemon_input, player_pokemon_input
+                        result = battle_loop_main(
+                            button1.text,
+                            enemy_pokemon_input,
+                            player_pokemon_input,
+                            screen,
                         )
+                        print(result)
+                        # Update the text surface with the move used during the game
+                        if result.players_move is None:
+                            player_text(screen, text_surface, result.players_move)
+                            enemy_text(screen, text_surface, result.enemies_move)
                     if buttons[selected_button_index] == button2:
                         result = battle_loop_main(
-                            button2.text, enemy_pokemon_input, player_pokemon_input
+                            button2.text,
+                            enemy_pokemon_input,
+                            player_pokemon_input,
+                            screen,
                         )
+                        print(result)
+                        # Update the text surface with the move used during the game
+                        if result.players_move is None:
+                            player_text(screen, text_surface, result.players_move)
+                            enemy_text(screen, text_surface, result.enemies_move)
                     if buttons[selected_button_index] == button3:
                         result = battle_loop_main(
-                            button3.text, enemy_pokemon_input, player_pokemon_input
+                            button3.text,
+                            enemy_pokemon_input,
+                            player_pokemon_input,
+                            screen,
                         )
+                        print(result)
+                        # Update the text surface with the move used during the game
+                        if result.players_move is None:
+                            player_text(screen, text_surface, result.players_move)
+                            enemy_text(screen, text_surface, result.enemies_move)
                     if buttons[selected_button_index] == button4:
                         result = battle_loop_main(
-                            button4.text, enemy_pokemon_input, player_pokemon_input
+                            button4.text,
+                            enemy_pokemon_input,
+                            player_pokemon_input,
+                            screen,
                         )
+                        print(result)
+                        # Update the text surface with the move used during the game
+                        if result.players_move is None:
+                            player_text(screen, text_surface, result.players_move)
+                            enemy_text(screen, text_surface, result.enemies_move)
 
         # Update game state
         ## update_loops
@@ -705,8 +724,6 @@ def game_loop(selection: str):
             * BAR_WIDTH
         )
 
-        test_func(screen)
-
         # Draw the health bar
         health_bar_rect = pygame.Rect(460, 300, health_bar_width, BAR_HEIGHT)
         pygame.draw.rect(screen, green_color, health_bar_rect)
@@ -722,12 +739,8 @@ def game_loop(selection: str):
         # Draw the image on the screen
         screen.blit(enemy_pokemon_surface, enemy_pokemon_image)
         screen.blit(player_pokemon_surface, player_pokemon_image)
-        # Blit the text surface onto the screen
-        screen.blit(text_surface, (50, 50))
-
-        # Update the text surface with the move used during the game
-        move_used = "blow"
-        text_surface = font.render("Move used: " + move_used, True, black_color)
+        # # Blit the text surface onto the screen
+        # screen.blit(text_surface, (50, 50))
 
         for button in buttons:
             button.draw(screen)

@@ -9,5 +9,4 @@ selection = menu()
 if selection == "start_game":
     # Call game loop
     selector = pokemon_selector().lower()
-    print(selector)
     game_loop(selector)

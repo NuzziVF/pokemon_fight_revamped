@@ -228,14 +228,12 @@ class Pokemon:
 class Turn:
     def __init__(
         self,
-        turn_count,
-        whose_first,
+        whose_first: str,
         players_pokemon: Pokemon,
         players_move: List,
         enemies_pokemon: Pokemon,
         enemies_move: List,
     ):
-        self.turn_count = turn_count
         self.whose_first = whose_first
         self.players_pokemon = players_pokemon
         self.players_move = players_move
